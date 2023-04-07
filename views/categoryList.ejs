@@ -32,7 +32,14 @@
         </div>
         <div class="col-sm-10">
           <h1><%= title %></h1>
-          <p>Welcome to <%= title %></p>
+          <ul>
+            <% for (let category of categoryList) { %>
+              <li style="margin-bottom: 48px;">
+                <h4><a href="/category/<%= category._id %>"><%= category.name %></a></h4>
+                <p><%= category.description %></p>
+              </li>
+            <% } %>
+          </ul>
         </div>
       </div>
     </div>
