@@ -5,7 +5,7 @@ const async = require('async');
 const { body, validationResult } = require("express-validator");
 
 exports.categoryCreateGet = (req, res) => {
-    res.send('Not yet implemented.');
+    res.render('categoryForm', { title: 'Create Category' });
 };
 
 exports.categoryCreatePost = (req, res) => {
@@ -28,7 +28,7 @@ exports.categoryUpdatePost = (req, res) => {
     res.send('Not yet implemented.');
 };
 
-exports.categoryDetail = (req, res) => {
+exports.categoryDetail = (req, res, next) => {
     async.parallel(
         {
             category(callback) {
@@ -49,7 +49,6 @@ exports.categoryDetail = (req, res) => {
                 return next(err);
             }
 
-            console.log(results.items)
             res.render('categoryDetail', {
                 title: results.category.name, 
                 category: results.category, 
@@ -60,7 +59,6 @@ exports.categoryDetail = (req, res) => {
 };
 
 exports.categoryList = (req, res, next) => {
-    console.log('ehl')
     Category.find()
         .sort({ name: 1})
         .exec(function(err, categoryList) {

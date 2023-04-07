@@ -1,15 +1,87 @@
 const Item = require('../models/item');
+const Category = require('../models/category');
 
 const async = require('async');
 const { body, validationResult } = require("express-validator");
 
-exports.itemCreateGet = (req, res) => {
-    res.send('Not yet implemented.');
+exports.itemCreateGet = (req, res, next) => {
+    Category.find({}, 'name').exec((err, categories) => {
+        if (err) {
+            next(err);
+        }
+
+        res.render('itemForm', {
+            title: 'Create Item',
+            categories: categories, 
+        });
+    })
 };
 
-exports.itemCreatePost = (req, res) => {
-    res.send('Not yet implemented.');
-};
+exports.itemCreatePost = [
+    body('itemname', 'Name must not be empty.')
+        .trim()
+        .isLength({ min: 3, max: 100 })
+        .escape(),
+    body('itemdesc', 'Description must not be empty.')
+        .trim()
+        .isLength({ min: 3 })
+        .escape(),
+    body('itemcategory', 'Description must not be empty.')
+        .trim()
+        .isLength({ min: 3 })
+        .escape(),
+    body('itemprice', 'Price must not be empty.')
+        .trim()
+        .isLength({ min: 1})
+        .escape(),
+    body('itemstock', 'Stock must not be empty.')
+        .trim()
+        .isLength({ min: 1 })
+        .escape(),
+
+    (req, res, next) => {
+        console.log('fucntion')
+        const errors = validationResult(req);
+
+        const item = new Item({
+            name: req.body.itemname,
+            description: req.body.itemdesc,
+            category: req.body.itemcategory,
+            price: req.body.itemprice,
+            numberInStock: req.body.itemstock,
+        });
+        
+        if (!errors.isEmpty()) {
+            console.log('asdasd')
+            Category.find({}, 'name').exec((err, categories) => {
+                if (err) {
+                    next(err);
+                }
+                
+                for (const category of categories) {
+                    if (item.category.toString() === category._id.toString()) {
+                        category.selected = "true";
+                    }
+                }
+        
+                res.render('itemForm', {
+                    title: 'Create Item',
+                    item,
+                    categories: categories, 
+                    errors: errors.array(),
+                });
+            })
+            return;
+        }
+        item.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            // Successful: redirect to new item record.
+            res.redirect(item.url);
+          });
+    }
+]
 
 exports.itemDeleteGet = (req, res) => {
     res.send('Not yet implemented.');
@@ -27,7 +99,7 @@ exports.itemUpdatePost = (req, res, next) => {
     res.send('Not yet implemented.');
 };
 
-exports.itemDetail = (req, res) => {
+exports.itemDetail = (req, res, next) => {
     Item.findById(req.params.id)
         .populate('category')
         .exec(function(err, item) {

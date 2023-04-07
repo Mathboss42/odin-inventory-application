@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <%- include('sidebar') %>
+        <div class="col-sm-10">
+          <h1><%= title %></h1>
+          <form action="" method="POST" style="width: 400px;">
+            <div>
+              <label for="itemname">Name:</label>
+              <input type="text" name="itemname" id="itemname" class="form-control" minlength="3" maxlength="100" required>
+            </div>
+            <div>
+              <label for="itemdesc">Description:</label>
+              <input type="text" name="itemdesc" id="itemdesc" class="form-control" minlength="3" required>
+            </div>
+            <div>
+              <label for="itemcategory">Category:</label>
+              <select name="itemcategory" id="itemcategory" class="form-control">
+                <% for (let category in categories) { %>
+                  <% if (categories[category].selected) { %>
+                    <option value="<%= categories[category]._id %>" selected><%= categories[category].name %></option>
+                  <% } else { %>
+                    <option value="<%= categories[category]._id %>"><%= categories[category].name %></option>                  
+                  <% } %>
+                <% } %>
+              </select>
+            </div>
+            <div>
+              <label for="itemprice">Price:</label>
+              <input type="number" name="itemprice" id="itemprice" min="0" placeholder="0" class="form-control" required>
+            </div>
+            <div>
+              <label for="itemstock">Number in stock:</label>
+              <input type="number" name="itemstock" id="itemstock" min="0" placeholder="0" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -11,7 +11,17 @@
         <%- include('sidebar') %>
         <div class="col-sm-10">
           <h1><%= title %></h1>
-          <p>Welcome to <%= title %></p>
+          <form action="" method="POST" style="width: 400px;">
+            <div>
+              <label for="itemname">Name:</label>
+              <input type="text" name="itemname" id="itemname" class="form-control">
+            </div>
+            <div>
+              <label for="itemdesc">Description:</label>
+              <input type="text" name="itemdesc" id="itemdesc" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
+          </form>
         </div>
       </div>
     </div>
