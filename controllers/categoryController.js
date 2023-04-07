@@ -1,4 +1,5 @@
 const Category = require('../models/category');
+const Item = require('../models/item');
 
 const async = require('async');
 const { body, validationResult } = require("express-validator");
@@ -28,7 +29,34 @@ exports.categoryUpdatePost = (req, res) => {
 };
 
 exports.categoryDetail = (req, res) => {
-    res.send('Not yet implemented.');
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.params.id).exec(callback)
+            },
+            items(callback) {
+                Item.find({ category: req.params.id }).exec(callback)
+            },
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+
+            if(results.category == null) {
+                const err = new Error("Category not found");
+                err.status = 404;
+                return next(err);
+            }
+
+            console.log(results.items)
+            res.render('categoryDetail', {
+                title: results.category.name, 
+                category: results.category, 
+                items: results.items
+            });
+        }
+    )
 };
 
 exports.categoryList = (req, res, next) => {

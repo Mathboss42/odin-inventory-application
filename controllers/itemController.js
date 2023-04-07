@@ -1,5 +1,4 @@
 const Item = require('../models/item');
-const Category = require('../models/item');
 
 const async = require('async');
 const { body, validationResult } = require("express-validator");
@@ -24,12 +23,26 @@ exports.itemUpdateGet = (req, res) => {
     res.send('Not yet implemented.');
 };
 
-exports.itemUpdatePost = (req, res) => {
+exports.itemUpdatePost = (req, res, next) => {
     res.send('Not yet implemented.');
 };
 
 exports.itemDetail = (req, res) => {
-    res.send('Not yet implemented.');
+    Item.findById(req.params.id)
+        .populate('category')
+        .exec(function(err, item) {
+            if (err) {
+                return next(err);
+            }
+
+            if (item == null) {
+                const err = new Error("Item not found");
+                err.status = 404;
+                return next(err);
+            }
+
+            res.render('itemDetail', { title: item.name, item: item });
+        });
 };
 
 exports.itemList = (req, res, next) => {
