@@ -46,14 +46,67 @@ exports.categoryCreatePost = [
     }
 ]
 
-exports.categoryDeleteGet = (req, res) => {
-    Category.findById(req.params.id).exec((err, category) => {
-        res.render('categoryDelete', { title: 'Delete Category', category });
-    })
+exports.categoryDeleteGet = (req, res, next) => {
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.params.id).exec(callback);
+            },
+            items(callback) {
+                Item.find({ category: req.params.id }).exec(callback);
+            }
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+
+            if (results.category == null) {
+                res.redirect('/inventory/categories');
+            }
+
+            res.render('categoryDelete', {
+                title: 'Delete Category',
+                category: results.category,
+                items: results.items,
+            })
+        }
+    );
 };
 
-exports.categoryDeletePost = (req, res) => {
-    res.send('Not yet implemented.');
+exports.categoryDeletePost = (req, res, next) => {
+    async.parallel(
+        {
+            category(callback) {
+                Category.findById(req.params.id).exec(callback);
+            },
+            items(callback) {
+                Item.find({ category: req.params.id }).exec(callback);
+            }
+        },
+        (err, results) => {
+            if (err) {
+                return next(err);
+            }
+
+            if (results.items.length > 0) {
+                res.render('categoryDelete', {
+                    title: 'Delete Category',
+                    category: results.category,
+                    items: results.items,
+                });
+                return;
+            }
+
+            Category.findByIdAndRemove(results.category._id, (err) => {
+                if (err) {
+                    return next(err);
+                }
+
+                res.redirect('/inventory/categories');
+            });
+        }
+    );
 };
 
 exports.categoryUpdateGet = (req, res) => {

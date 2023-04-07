@@ -81,14 +81,34 @@ exports.itemCreatePost = [
     }
 ]
 
-exports.itemDeleteGet = (req, res) => {
+exports.itemDeleteGet = (req, res, next) => {
     Item.findById(req.params.id).exec((err, item) => {
+        if (err) {
+            return next(err);
+        }
+
+        if (item == null) {
+            res.redirect('/inventory/items');
+        }
+
         res.render('itemDelete', { title: 'Delete Item', item });
     })
 };
 
-exports.itemDeletePost = (req, res) => {
-    res.send('Not yet implemented.');
+exports.itemDeletePost = (req, res, next) => {
+    Item.findById(req.params.id).exec((err, item) => {
+        if (err) {
+            return next(err);
+        }
+
+        Item.findByIdAndRemove(item._id, (err) => {
+            if (err) {
+                return next(err);
+            }
+
+            res.redirect('/inventory/items');
+        });
+    })
 };
 
 exports.itemUpdateGet = (req, res) => {
