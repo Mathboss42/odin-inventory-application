@@ -14,11 +14,11 @@
           <form action="" method="POST" style="width: 400px;">
             <div>
               <label for="itemname">Name:</label>
-              <input type="text" name="itemname" id="itemname" class="form-control" minlength="3" maxlength="100" required>
+              <input type="text" name="itemname" id="itemname" class="form-control" minlength="3" maxlength="100" required value="<%= item === undefined ? '' : item.name %>">
             </div>
             <div>
               <label for="itemdesc">Description:</label>
-              <input type="text" name="itemdesc" id="itemdesc" class="form-control" minlength="3" required>
+              <input type="text" name="itemdesc" id="itemdesc" class="form-control" minlength="3" required value="<%= item === undefined ? '' : item.description %>">
             </div>
             <div>
               <label for="itemcategory">Category:</label>
@@ -34,11 +34,11 @@
             </div>
             <div>
               <label for="itemprice">Price:</label>
-              <input type="number" name="itemprice" id="itemprice" min="0" placeholder="0" class="form-control" required>
+              <input type="number" name="itemprice" id="itemprice" min="0" placeholder="0" class="form-control" required value="<%= item === undefined ? '' : item.price %>">
             </div>
             <div>
               <label for="itemstock">Number in stock:</label>
-              <input type="number" name="itemstock" id="itemstock" min="0" placeholder="0" class="form-control" required>
+              <input type="number" name="itemstock" id="itemstock" min="0" placeholder="0" class="form-control" required value="<%= item === undefined ? '' : item.numberInStock %>">
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
           </form>

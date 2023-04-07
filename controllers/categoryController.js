@@ -27,7 +27,6 @@ exports.categoryCreatePost = [
         });
         
         if (!errors.isEmpty()) {
-            console.log('error');
             res.render('categoryForm', {
                 title: 'Create Item',
                 category,
@@ -44,7 +43,7 @@ exports.categoryCreatePost = [
             res.redirect(category.url);
           });
     }
-]
+];
 
 exports.categoryDeleteGet = (req, res, next) => {
     async.parallel(
@@ -110,12 +109,61 @@ exports.categoryDeletePost = (req, res, next) => {
 };
 
 exports.categoryUpdateGet = (req, res) => {
-    res.send('Not yet implemented.');
+    Category.findById(req.params.id).exec((err, category) => {
+        if (err) {
+            return next(err);
+        }
+
+        if (category == null) {
+            const err = new Error("Category not found");
+            err.status = 404;
+            return next(err);
+        }
+
+        res.render('categoryForm', {
+            title: 'Create Category',
+            category: category,
+        })
+    });
 };
 
-exports.categoryUpdatePost = (req, res) => {
-    res.send('Not yet implemented.');
-};
+exports.categoryUpdatePost = [
+    body('categoryname', 'Name must not be empty.')
+        .trim()
+        .isLength({ min: 3, max: 100 })
+        .escape(),
+    body('categorydesc', 'Description must not be empty.')
+        .trim()
+        .isLength({ min: 3 })
+        .escape(),
+    
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        const category = new Category({
+            name: req.body.categoryname,
+            description: req.body.categorydesc,
+            _id: req.params.id,
+        });
+        
+        if (!errors.isEmpty()) {
+            res.render('categoryForm', {
+                title: 'Create Item',
+                category,
+                errors: errors.array(),
+            });
+            return;
+        }
+
+        Category.findByIdAndUpdate(req.params.id, category, {}, (err, thecategory) => {
+            if (err) {
+                return next(err);
+            }
+
+            res.redirect(thecategory.url);
+        });
+    }
+];
 
 exports.categoryDetail = (req, res, next) => {
     async.parallel(
@@ -154,7 +202,6 @@ exports.categoryList = (req, res, next) => {
             if (err) {
                 return next(err);
             }
-            console.log(categoryList)
             res.render('categoryList', { title : 'Category List', categoryList: categoryList });
         });
 };
