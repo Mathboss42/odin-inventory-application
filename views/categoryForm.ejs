@@ -13,12 +13,12 @@
           <h1><%= title %></h1>
           <form action="" method="POST" style="width: 400px;">
             <div>
-              <label for="itemname">Name:</label>
-              <input type="text" name="itemname" id="itemname" class="form-control">
+              <label for="categoryname">Name:</label>
+              <input type="text" name="categoryname" id="categoryname" class="form-control" value="<%= category === undefined ? '' : category.name %>" required minlength="3" maxlength="100">
             </div>
             <div>
-              <label for="itemdesc">Description:</label>
-              <input type="text" name="itemdesc" id="itemdesc" class="form-control">
+              <label for="categorydesc">Description:</label>
+              <input type="text" name="categorydesc" id="categorydesc" class="form-control" value="<%= category === undefined ? '' : category.description %>" required minlength="3">
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
           </form>

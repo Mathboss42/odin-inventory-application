@@ -40,7 +40,6 @@ exports.itemCreatePost = [
         .escape(),
 
     (req, res, next) => {
-        console.log('fucntion')
         const errors = validationResult(req);
 
         const item = new Item({
@@ -52,7 +51,6 @@ exports.itemCreatePost = [
         });
         
         if (!errors.isEmpty()) {
-            console.log('asdasd')
             Category.find({}, 'name').exec((err, categories) => {
                 if (err) {
                     next(err);

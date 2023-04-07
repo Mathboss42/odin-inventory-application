@@ -5,12 +5,46 @@ const async = require('async');
 const { body, validationResult } = require("express-validator");
 
 exports.categoryCreateGet = (req, res) => {
-    res.render('categoryForm', { title: 'Create Category' });
+    res.render('categoryForm', { title: 'Create Category', category: undefined });
 };
 
-exports.categoryCreatePost = (req, res) => {
-    res.send('Not yet implemented.');
-};
+exports.categoryCreatePost = [
+    body('categoryname', 'Name must not be empty.')
+        .trim()
+        .isLength({ min: 3, max: 100 })
+        .escape(),
+    body('categorydesc', 'Description must not be empty.')
+        .trim()
+        .isLength({ min: 3 })
+        .escape(),
+    
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        const category = new Category({
+            name: req.body.categoryname,
+            description: req.body.categorydesc,
+        });
+        
+        if (!errors.isEmpty()) {
+            console.log('error');
+            res.render('categoryForm', {
+                title: 'Create Item',
+                category,
+                errors: errors.array(),
+            });
+            return;
+        }
+
+        category.save((err) => {
+            if (err) {
+              return next(err);
+            }
+            // Successful: redirect to new item record.
+            res.redirect(category.url);
+          });
+    }
+]
 
 exports.categoryDeleteGet = (req, res) => {
     res.send('Not yet implemented.');
