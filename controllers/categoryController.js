@@ -47,7 +47,9 @@ exports.categoryCreatePost = [
 ]
 
 exports.categoryDeleteGet = (req, res) => {
-    res.send('Not yet implemented.');
+    Category.findById(req.params.id).exec((err, category) => {
+        res.render('categoryDelete', { title: 'Delete Category', category });
+    })
 };
 
 exports.categoryDeletePost = (req, res) => {

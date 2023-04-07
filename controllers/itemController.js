@@ -82,7 +82,9 @@ exports.itemCreatePost = [
 ]
 
 exports.itemDeleteGet = (req, res) => {
-    res.send('Not yet implemented.');
+    Item.findById(req.params.id).exec((err, item) => {
+        res.render('itemDelete', { title: 'Delete Item', item });
+    })
 };
 
 exports.itemDeletePost = (req, res) => {
