@@ -20,6 +20,12 @@
               <label for="categorydesc">Description:</label>
               <input type="text" name="categorydesc" id="categorydesc" class="form-control" value="<%= category === undefined ? '' : category.description %>" required minlength="3">
             </div>
+            <% if (restricted) { %>
+              <div>
+                <label for="password">Password: (password is required to update entries)</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+              </div>
+            <% } %>
             <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
           </form>
         </div>

@@ -142,8 +142,9 @@ exports.categoryUpdateGet = (req, res) => {
         }
 
         res.render('categoryForm', {
-            title: 'Create Category',
+            title: 'Update Category',
             category: category,
+            restricted: true
         })
     });
 };
@@ -157,6 +158,11 @@ exports.categoryUpdatePost = [
         .trim()
         .isLength({ min: 3 })
         .escape(),
+    body('password', 'Wrong password')
+        .trim()
+        .isLength({ min: 1})
+        .escape()
+        .custom((value, { req }) => value === process.env.ADMIN_PASS),
     
     (req, res, next) => {
         const errors = validationResult(req);
@@ -169,8 +175,9 @@ exports.categoryUpdatePost = [
         
         if (!errors.isEmpty()) {
             res.render('categoryForm', {
-                title: 'Create Item',
+                title: 'Update Item',
                 category,
+                restricted: true,
                 errors: errors.array(),
             });
             return;
