@@ -41,13 +41,19 @@
               <input type="number" name="itemstock" id="itemstock" min="0" placeholder="0" class="form-control" required value="<%= item === undefined ? '' : item.numberInStock %>">
             </div>
             <div>
-              <% if (item.imageName) { %>
+              <% if (item !== undefined && item.imageName) { %>
                 <label for="itemimage">Change Image:</label>
               <% } else { %>
                 <label for="itemimage">Add Image:</label>
               <% } %>
               <input type="file" name="itemimage" id="itemimage" class="form-control-file" accept="image/png, image/jpeg, image/jpg, image/webp">
             </div>
+            <% if (restricted) { %>
+              <div>
+                <label for="password">Password: (password is required to update entries)</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+              </div>
+            <% } %>
             <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
           </form>
         </div>

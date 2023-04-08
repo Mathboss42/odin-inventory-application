@@ -16,6 +16,7 @@ exports.itemCreateGet = (req, res, next) => {
             title: 'Create Item',
             item: undefined,
             categories: categories, 
+            restricted: false,
         });
     })
 };
@@ -108,21 +109,36 @@ exports.itemDeleteGet = (req, res, next) => {
     })
 };
 
-exports.itemDeletePost = (req, res, next) => {
-    Item.findById(req.params.id).exec((err, item) => {
-        if (err) {
-            return next(err);
-        }
+exports.itemDeletePost = [
+    body('password', 'Wrong password')
+        .trim()
+        .isLength({ min: 1})
+        .escape()
+        .custom((value, { req }) => value === process.env.ADMIN_PASS),
 
-        Item.findByIdAndRemove(item._id, (err) => {
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        Item.findById(req.params.id).exec((err, item) => {
             if (err) {
                 return next(err);
             }
 
-            res.redirect('/inventory/items');
-        });
-    })
-};
+            if (!errors.isEmpty()) {
+                res.render('itemDelete', { title: 'Delete Item', item });
+                return;
+            }
+
+            Item.findByIdAndRemove(item._id, (err) => {
+                if (err) {
+                    return next(err);
+                }
+
+                res.redirect('/inventory/items');
+            });
+        })
+    }
+];
 
 exports.itemUpdateGet = (req, res, next) => {
     async.parallel(
@@ -158,6 +174,7 @@ exports.itemUpdateGet = (req, res, next) => {
                 title: 'Update Item',
                 item: results.item,
                 categories: results.categories,
+                restricted: true,
             })
         }
     )
@@ -186,6 +203,11 @@ exports.itemUpdatePost = [
         .trim()
         .isLength({ min: 1 })
         .escape(),
+    body('password', 'Wrong password')
+        .trim()
+        .isLength({ min: 1})
+        .escape()
+        .custom((value, { req }) => value === process.env.ADMIN_PASS),
 
     (req, res, next) => {
         const errors = validationResult(req);
@@ -216,11 +238,12 @@ exports.itemUpdatePost = [
                         category.selected = "true";
                     }
                 }
-        
+                
                 res.render('itemForm', {
-                    title: 'Create Item',
+                    title: 'Update Item',
                     item,
                     categories: categories, 
+                    restricted: true,
                     errors: errors.array(),
                 });
             })
