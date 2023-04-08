@@ -3,7 +3,8 @@ const Category = require('../models/category');
 
 const async = require('async');
 const { body, validationResult } = require("express-validator");
-const item = require('../models/item');
+const multer  = require('multer');
+const upload = multer({ dest: 'public/images/' });
 
 exports.itemCreateGet = (req, res, next) => {
     Category.find({}, 'name').exec((err, categories) => {
@@ -20,29 +21,37 @@ exports.itemCreateGet = (req, res, next) => {
 };
 
 exports.itemCreatePost = [
+    upload.single('itemimage'),
+
     body('itemname', 'Name must not be empty.')
-        .trim()
-        .isLength({ min: 3, max: 100 })
-        .escape(),
+    .trim()
+    .isLength({ min: 3, max: 100 })
+    .escape(),
     body('itemdesc', 'Description must not be empty.')
-        .trim()
-        .isLength({ min: 3 })
-        .escape(),
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
     body('itemcategory', 'Description must not be empty.')
-        .trim()
-        .isLength({ min: 3 })
-        .escape(),
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
     body('itemprice', 'Price must not be empty.')
-        .trim()
-        .isLength({ min: 1})
-        .escape(),
+    .trim()
+    .isLength({ min: 1})
+    .escape(),
     body('itemstock', 'Stock must not be empty.')
-        .trim()
-        .isLength({ min: 1 })
-        .escape(),
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
 
     (req, res, next) => {
         const errors = validationResult(req);
+        console.log(req.file);
+
+        let filename = null;
+        if (req.file) {
+            filename = req.file.filename;
+        }
 
         const item = new Item({
             name: req.body.itemname,
@@ -50,8 +59,9 @@ exports.itemCreatePost = [
             category: req.body.itemcategory,
             price: req.body.itemprice,
             numberInStock: req.body.itemstock,
+            imageName: filename,
         });
-        
+        console.log(item);
         if (!errors.isEmpty()) {
             Category.find({}, 'name').exec((err, categories) => {
                 if (err) {
@@ -59,6 +69,7 @@ exports.itemCreatePost = [
                 }
                 
                 for (const category of categories) {
+                    console.log(item.category);
                     if (item.category.toString() === category._id.toString()) {
                         category.selected = "true";
                     }
@@ -153,6 +164,8 @@ exports.itemUpdateGet = (req, res, next) => {
 };
 
 exports.itemUpdatePost = [
+    upload.single('itemimage'),
+
     body('itemname', 'Name must not be empty.')
         .trim()
         .isLength({ min: 3, max: 100 })
@@ -177,12 +190,18 @@ exports.itemUpdatePost = [
     (req, res, next) => {
         const errors = validationResult(req);
 
+        let filename = Item.findById(req.params.id).imageName;
+        if (req.file) {
+            filename = req.file.filename;
+        }
+
         const item = new Item({
             name: req.body.itemname,
             description: req.body.itemdesc,
             category: req.body.itemcategory,
             price: req.body.itemprice,
             numberInStock: req.body.itemstock,
+            imageName: filename,
             _id: req.params.id,
         });
         

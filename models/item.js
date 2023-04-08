@@ -9,6 +9,7 @@ const ItemSchema = new Schema({
     price: {type: Number, required: true},
     numberInStock: Number,
     properties: Object,
+    imageName: String
 });
 
 ItemSchema.virtual('url').get(function() {

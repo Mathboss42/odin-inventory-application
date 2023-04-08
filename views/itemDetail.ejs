@@ -11,6 +11,7 @@
         <%- include('sidebar') %>
         <div class="col-sm-10">
           <h1><%= item.name %></h1>
+          <img src="/images/<%= item.imageName %>" alt="item">
           <p><%= item.description %></p>
           <p>Category: <a href="/inventory/category/<%= item.category._id %>"><%= item.category.name %></a></p>
           <p>Price: <%= item.price %>€$</p>

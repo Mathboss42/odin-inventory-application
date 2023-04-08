@@ -11,7 +11,7 @@
         <%- include('sidebar') %>
         <div class="col-sm-10">
           <h1><%= title %></h1>
-          <form action="" method="POST" style="width: 400px;">
+          <form action="" method="POST" style="width: 400px;" enctype="multipart/form-data">
             <div>
               <label for="itemname">Name:</label>
               <input type="text" name="itemname" id="itemname" class="form-control" minlength="3" maxlength="100" required value="<%= item === undefined ? '' : item.name %>">
@@ -39,6 +39,14 @@
             <div>
               <label for="itemstock">Number in stock:</label>
               <input type="number" name="itemstock" id="itemstock" min="0" placeholder="0" class="form-control" required value="<%= item === undefined ? '' : item.numberInStock %>">
+            </div>
+            <div>
+              <% if (item.imageName) { %>
+                <label for="itemimage">Change Image:</label>
+              <% } else { %>
+                <label for="itemimage">Add Image:</label>
+              <% } %>
+              <input type="file" name="itemimage" id="itemimage" class="form-control-file" accept="image/png, image/jpeg, image/jpg, image/webp">
             </div>
             <button type="submit" class="btn btn-primary" style="margin-top: 24px;">Submit</button>
           </form>
