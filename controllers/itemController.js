@@ -79,7 +79,8 @@ exports.itemCreatePost = [
                 res.render('itemForm', {
                     title: 'Create Item',
                     item,
-                    categories: categories, 
+                    categories: categories,
+                    restricted: false, 
                     errors: errors.array(),
                 });
             })
